@@ -14,8 +14,8 @@ audio.init()
 audio.prepare_file(path)
 
 def player():
-    audio.play_file(path)
-    audio.wait()
+    audio.play_file(path, real_clock)
+    audio.wait(real_clock)
 
 clock.run_at(timestamp, player, real_clock)
 
