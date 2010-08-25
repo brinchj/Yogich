@@ -4,13 +4,13 @@ import time, pygame
 def prepare_file(path):
     file(path).read()
 
-def init():
+def init(path):
     pygame.init()
     pygame.mixer.init(44100)
-
-def play_file(path, clock):
-    print 'Play called at:', clock()
     pygame.mixer.music.load(path)
+
+def play_file(clock):
+    print 'Play called at:', clock()
     pygame.mixer.music.play()
     print 'Starting playback at:', clock()
 

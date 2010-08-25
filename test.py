@@ -10,11 +10,11 @@ timestamp = Decimal(timestamp)
 diff = ntp.get_time_more_exact()
 real_clock = clock.build_clock(diff)
 
-audio.init()
+audio.init(path)
 audio.prepare_file(path)
 
 def player():
-    audio.play_file(path, real_clock)
+    audio.play_file(real_clock)
     audio.wait(real_clock)
 
 clock.run_at(timestamp, player, real_clock)
