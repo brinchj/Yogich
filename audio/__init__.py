@@ -1,16 +1,11 @@
-import time, pygame, cStringIO
-
+import time, cStringIO, subprocess
 
 def prepare_file(path):
     file(path).read()
 
-def init(path):
-    pygame.mixer.init(44100)
-    return pygame.mixer.Sound(cStringIO.StringIO(file(path).read()))
-
-def play_file(sound, clock):
+def play_file(path, clock):
     print 'Play called at:', clock()
-    sound.play()
+    subprocess.call(['mplayer', path])
     print 'Starting playback at:', clock()
 
 def wait(clock):

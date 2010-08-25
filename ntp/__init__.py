@@ -30,7 +30,7 @@ def get_time():
 
 def get_time_exact():
     time_used = 1
-    while time_used > Dec(str(0.0015)):
+    while time_used > Dec(str(0.05)):
         time_start, time_used, secs, frac = get_time()
     his = time_start + time_used/2
     her = secs + (frac / Dec(2**32)) + time_used/2 - TIME1970
