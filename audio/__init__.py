@@ -1,21 +1,20 @@
-import time, pygame
+import time, pygame, cStringIO
 
 
 def prepare_file(path):
     file(path).read()
 
 def init(path):
-    pygame.init()
     pygame.mixer.init(44100)
-    pygame.mixer.music.load(path)
+    return pygame.mixer.Sound(cStringIO.StringIO(file(path).read()))
 
-def play_file(clock):
+def play_file(sound, clock):
     print 'Play called at:', clock()
-    pygame.mixer.music.play()
+    sound.play()
     print 'Starting playback at:', clock()
 
 def wait(clock):
-    while pygame.mixer.music.get_busy():
-        print clock(), pygame.mixer.music.get_pos()
+    while pygame.mixer.get_busy():
+        print clock()
         time.sleep(1)
 
