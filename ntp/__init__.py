@@ -1,17 +1,36 @@
-from socket import *
-import struct
-import sys
-import time
+from socket import socket, AF_INET, SOCK_DGRAM, timeout
+from decimal import Decimal as Dec
+import struct, sys, time
 
-def getTime():
+TIME1970 = 2208988800L
+
+def get_time():
     NTP_SERVER = "130.225.96.8"
-    TIME1970 = 2208988800L      # Thanks to F.Lundh
 
     client = socket( AF_INET, SOCK_DGRAM )
     data = '\x1b' + 47 * '\0'
-    client.sendto( data, ( NTP_SERVER, 123 ))
-    data, address = client.recvfrom( 1024 )
+    client.settimeout(1)
+
+    for i in xrange(20):
+        try:
+            start = time.time()
+            client.sendto( data, ( NTP_SERVER, 123 ))
+            data, address = client.recvfrom( 1024 )
+            time_used = time.time() - start
+            break
+        except timeout:
+            time.sleep(.1*i)
+            continue
+
     if data:
         s = struct.unpack( '!12I', data )
-        return s[10], s[11]
-    return None
+        return start, time_used, s[10], s[11]
+
+
+def get_time_exact():
+    time_used = 1
+    while time_used > 0.0015:
+        time_start, time_used, secs, frac = get_time()
+    his = Dec(str(time_start)) + Dec(str(time_used))/2
+    her = Dec(secs) + (Dec(frac) / Dec(2**32)) + Dec(str(time_used))/2 - TIME1970
+    return (his, her)
