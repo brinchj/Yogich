@@ -33,4 +33,15 @@ def get_time_exact():
         time_start, time_used, secs, frac = get_time()
     his = Dec(str(time_start)) + Dec(str(time_used))/2
     her = Dec(secs) + (Dec(frac) / Dec(2**32)) + Dec(str(time_used))/2 - TIME1970
-    return (his, her)
+    return his - her
+
+def get_time_more_exact():
+    tries = 10
+    
+    msum = Dec(0)
+
+    for n in xrange(tries):
+        msum += get_time_exact()
+        time.sleep(0.005)
+
+    return msum / tries
