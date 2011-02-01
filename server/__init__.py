@@ -61,6 +61,7 @@ class Server(Thread):
         Thread.__init__(self)
         self.socket = socket(AF_INET, SOCK_DGRAM)
         self.socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+        self.daemon = True
         self.next_time = int(clock.now() + 60)
         self.port = port
 
@@ -71,9 +72,6 @@ class Server(Thread):
         while True:
             self.broadcast()
             time.sleep(15)
-
-    def stop(self):
-        pass
 
     def broadcast(self):
         self.socket.sendto(self.playlist.pack(), ('255.255.255.255', self.port))
