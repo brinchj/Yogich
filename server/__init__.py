@@ -7,7 +7,12 @@ from subprocess import PIPE, Popen
 from socket import socket, SOL_SOCKET, SO_BROADCAST, AF_INET, SOCK_DGRAM
 from threading import Thread
 
-from lib import clock
+from lib.clock import build_clock
+from lib.ntp import get_time_more_exact
+
+
+now = build_clock(get_time_more_exact())
+nowi = lambda: int(now())
 
 
 class Track:
@@ -29,7 +34,7 @@ class Track:
         return self.duration
 
     def id(self):
-        return 4 # Random id, chosen by a fair dice roll.
+        return 4  # Random id, chosen by a fair dice roll.
 
 
 class Playlist:
@@ -38,14 +43,14 @@ class Playlist:
 
     def add_next(self, track):
         if self.tracks is None:
-            self.tracks = [(clock.now() + 10, track)]
+            self.tracks = [(int(now()) + 10, track)]
         else:
             prev_t, prev_track = self.tracks[-1]
-            next_t = prev_t + prev_track.duration() + 5
+            next_t = prev_t + prev_track.get_duration() + 5
             self.tracks.append((next_t, track))
 
     def clean(self):
-        while self.tracks and self.tracks[0] < clock.now():
+        while self.tracks and self.tracks[0][0] < nowi():
             self.tracks.pop(0)
 
     def pack(self):
@@ -53,7 +58,7 @@ class Playlist:
         lst = []
         for t, track in self.tracks[0:5]:
             lst.extend([t, track.id()])
-        return struct.pack('!ll' * len(self.tracks), *lst)
+        return struct.pack('!' + ('qq' * len(self.tracks)), *lst)
 
 
 class Server(Thread):
@@ -62,11 +67,11 @@ class Server(Thread):
         self.socket = socket(AF_INET, SOCK_DGRAM)
         self.socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
         self.daemon = True
-        self.next_time = int(clock.now() + 60)
         self.port = port
 
         self.playlist = Playlist()
         self.playlist.add_next(Track("sailor"))
+        self.playlist.add_next(Track("toybox.wav"))
 
     def run(self):
         while True:
@@ -74,4 +79,6 @@ class Server(Thread):
             time.sleep(15)
 
     def broadcast(self):
-        self.socket.sendto(self.playlist.pack(), ('255.255.255.255', self.port))
+        print '> send', len(self.playlist.pack())
+        self.socket.sendto(self.playlist.pack(),
+                           ('255.255.255.255', self.port))
