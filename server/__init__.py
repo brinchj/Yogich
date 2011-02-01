@@ -28,12 +28,15 @@ class Track:
             self.duration = float(match.group(1))
         return self.duration
 
+    def id(self):
+        return 4 # Random id, chosen by a fair dice roll.
+
 
 class Playlist:
     def __init__(self):
         self.tracks = None
 
-    def set_next(self, track):
+    def add_next(self, track):
         if self.tracks is None:
             self.tracks = [(clock.now() + 10, track)]
         else:
@@ -42,12 +45,14 @@ class Playlist:
             self.tracks.append((next_t, track))
 
     def clean(self):
-        pass
+        while self.tracks and self.tracks[0] < clock.now():
+            self.tracks.pop(0)
 
     def pack(self):
+        self.clean()
         lst = []
-        for t, track in self.tracks:
-            lst.extend([t, track.id])
+        for t, track in self.tracks[0:5]:
+            lst.extend([t, track.id()])
         return struct.pack('!ll' * len(self.tracks), *lst)
 
 
@@ -59,6 +64,9 @@ class Server(Thread):
         self.next_time = int(clock.now() + 60)
         self.port = port
 
+        self.playlist = Playlist()
+        self.playlist.add_next(Track("sailor"))
+
     def run(self):
         while True:
             self.broadcast()
@@ -68,5 +76,4 @@ class Server(Thread):
         pass
 
     def broadcast(self):
-        packet = struct.pack('l', self.next_time)
-        self.socket.sendto(packet, ('255.255.255.255', self.port))
+        self.socket.sendto(self.playlist.pack(), ('255.255.255.255', self.port))
