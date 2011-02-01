@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-import clock, ntp, time, sys
+import clock
+import ntp
+import time
+import sys
 
 diff = ntp.get_time_more_exact()
 clck = clock.build_clock(diff)

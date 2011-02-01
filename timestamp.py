@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 import clock
-print int(clock.now()+60)
+print int(clock.now() + 60)

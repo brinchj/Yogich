@@ -5,11 +5,15 @@ import time
 
 def now(diff=0):
     delta = datetime.utcnow() - datetime.utcfromtimestamp(0)
-    now = Dec(delta.days*3600*24) + Dec(delta.seconds) + Dec(delta.microseconds)/1000000
+    now = Dec(delta.days * 3600 * 24) + \
+          Dec(delta.seconds) + \
+          Dec(delta.microseconds) / 1000000
     return now - diff
+
 
 def build_clock(diff=0):
     return lambda: now(diff)
+
 
 def run_at(start_time, fun, clock):
     critical = Dec('0.02')
@@ -18,4 +22,3 @@ def run_at(start_time, fun, clock):
     while clock() < start_time:
         pass
     fun()
-
