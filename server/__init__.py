@@ -48,7 +48,7 @@ class Playlist:
         lst = []
         for t, track in self.tracks:
             lst.extend([t, track.id])
-        return struct.pack('!ll' * len(self.tracks), lst)
+        return struct.pack('!ll' * len(self.tracks), *lst)
 
 
 class Server(Thread):
