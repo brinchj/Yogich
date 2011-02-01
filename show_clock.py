@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import clock
-import ntp
+from lib import clock, ntp
 import time
 import sys
 

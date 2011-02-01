@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-import ntp
-import clock
-import audio
 from decimal import Decimal
+from lib import clock, ntp, audio
 
 timestamp, path = sys.argv[1:]
 timestamp = Decimal(timestamp)

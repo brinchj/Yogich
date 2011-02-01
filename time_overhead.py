@@ -2,9 +2,7 @@
 
 import sys
 import subprocess
-import ntp
-import clock
-
+from lib import clock, ntp
 
 path = sys.argv[1]
 diff = ntp.get_time_more_exact()

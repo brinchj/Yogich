@@ -1,11 +1,11 @@
 from socket import socket, AF_INET, SOCK_DGRAM, timeout
 from decimal import Decimal as Dec
-import clock
+from lib import clock
 
 import struct
 import time
 
-TIME1970 = 2208988800L
+TIME1970 = 2208988800L  # NTP
 
 
 def get_time():
